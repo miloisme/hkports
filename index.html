@@ -187,14 +187,14 @@ const RAW_URLS = {
   visitors: 'https://secure1.info.gov.hk/immd/mobileapps/2bb9ae17/data/CPQueueTimeV.json'
 };
 
-const API = location.protocol === 'file:'
+const API = ['localhost', '127.0.0.1'].includes(location.hostname)
   ? {
-      residents: 'https://corsproxy.io/?url=' + encodeURIComponent(RAW_URLS.residents),
-      visitors: 'https://corsproxy.io/?url=' + encodeURIComponent(RAW_URLS.visitors)
-    }
-  : {
       residents: '/api/residents',
       visitors: '/api/visitors'
+    }
+  : {
+      residents: 'https://api.allorigins.win/raw?url=' + encodeURIComponent(RAW_URLS.residents),
+      visitors: 'https://api.allorigins.win/raw?url=' + encodeURIComponent(RAW_URLS.visitors)
     };
 
 function getTag(value) {

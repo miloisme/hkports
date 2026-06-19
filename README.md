@@ -1,31 +1,31 @@
-# 香港陸路邊境管制站等候時間
+# HK Land Boundary Control Points Waiting Time
 
-顯示香港 8 個陸路邊境管制站的入境及出境等候時間，數據源自入境事務處開放數據平台，每 15 分鐘自動更新。
+Real-time waiting times for immigration clearance at Hong Kong's 8 land boundary control points. Data sourced from the Immigration Department's open data platform, updated every 15 minutes.
 
-**口岸包括：**
-- 香園圍口岸（Heung Yuen Wai）
-- 港珠澳大橋口岸（Hong Kong-Zhuhai-Macao Bridge）
-- 落馬洲口岸（Lok Ma Chau）
-- 羅湖口岸（Lo Wu）
-- 蓮塘口岸（Liantang）
-- 文錦渡口岸（Man Kam To）
-- 深圳灣口岸（Shenzhen Bay）
-- 沙頭角口岸（Sha Tau Kok）
+**Control points:**
+- Heung Yuen Wai (香園圍口岸)
+- Hong Kong-Zhuhai-Macao Bridge (港珠澳大橋口岸)
+- Lok Ma Chau (落馬洲口岸)
+- Lo Wu (羅湖口岸)
+- Liantang (蓮塘口岸)
+- Man Kam To (文錦渡口岸)
+- Shenzhen Bay (深圳灣口岸)
+- Sha Tau Kok (沙頭角口岸)
 
-**等候級別：**
-- 🟢 正常（< 15 分鐘）
-- 🟡 繁忙（15-30 分鐘）
-- 🔴 非常繁忙（> 30 分鐘）
-- ⚪ 關閉
+**Waiting levels:**
+- 🟢 Normal (< 15 min)
+- 🟡 Busy (15-30 min)
+- 🔴 Very busy (> 30 min)
+- ⚪ Closed
 
-## 使用
+## Usage
 
-直接雙擊 `index.html` 在瀏覽器開啟即可。
+Open `index.html` in your browser by double-clicking the file.
 
-## 數據來源
+## Data Source
 
-[data.gov.hk - 陸路邊境管制站等候時間](https://data.gov.hk/tc-data/dataset/hk-immd-set28-land-boundary-control-points-waiting-time)
+[data.gov.hk - Land Boundary Control Points Waiting Time](https://data.gov.hk/en-data/dataset/hk-immd-set28-land-boundary-control-points-waiting-time)
 
-## 授權
+## License
 
-本頁面僅為數據展示，數據版權歸香港特別行政區政府所有。
+This page is for data display only. Data copyright belongs to the Government of the Hong Kong Special Administrative Region.

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-HK">
+<html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,9 +9,12 @@
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: -apple-system, 'Microsoft JhengHei', 'Noto Sans TC', sans-serif; background: #f0f4f8; color: #1a202c; padding: 16px; min-height: 100vh; }
   .container { max-width: 1000px; margin: 0 auto; }
-  h1 { font-size: 1.5rem; text-align: center; padding: 20px 0 8px; color: #2d3748; }
-  .subtitle { text-align: center; color: #718096; font-size: 0.85rem; margin-bottom: 20px; }
-  .last-update { text-align: center; font-size: 0.8rem; color: #a0aec0; margin-bottom: 20px; }
+  .header { display: flex; align-items: center; justify-content: center; gap: 12px; padding: 20px 0 8px; flex-wrap: wrap; }
+  .header h1 { font-size: 1.5rem; color: #2d3748; }
+  .lang-btn { background: none; border: 1px solid #cbd5e0; border-radius: 6px; padding: 4px 10px; font-size: 0.8rem; cursor: pointer; color: #4a5568; transition: all 0.2s; }
+  .lang-btn:hover { background: #e2e8f0; }
+  .subtitle { text-align: center; color: #718096; font-size: 0.85rem; margin-bottom: 8px; }
+  .last-update { text-align: center; font-size: 0.8rem; color: #a0aec0; margin-bottom: 16px; }
   .tabs { display: flex; gap: 0; margin-bottom: 16px; background: #e2e8f0; border-radius: 10px; overflow: hidden; }
   .tab { flex: 1; padding: 10px; text-align: center; cursor: pointer; font-weight: 600; font-size: 0.9rem; color: #718096; transition: all 0.2s; border: none; background: transparent; }
   .tab.active { background: #fff; color: #2b6cb0; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
@@ -20,7 +23,7 @@
   .card { background: #fff; border-radius: 12px; padding: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); transition: transform 0.15s; }
   .card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
   .card-title { font-size: 1rem; font-weight: 700; color: #2d3748; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
-  .card-title .en { font-size: 0.7rem; font-weight: 400; color: #a0aec0; }
+  .card-title .sub { font-size: 0.7rem; font-weight: 400; color: #a0aec0; }
   .row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid #f7fafc; font-size: 0.85rem; }
   .row:last-child { border-bottom: none; }
   .label { color: #718096; }
@@ -40,56 +43,143 @@
   .footer a { color: #4a5568; }
   @media (max-width: 600px) {
     body { padding: 10px; }
-    h1 { font-size: 1.2rem; }
+    .header h1 { font-size: 1.2rem; }
     .grid { grid-template-columns: 1fr; }
   }
 </style>
 </head>
 <body>
 <div class="container">
-  <h1>🚌 陸路邊境管制站等候時間</h1>
-  <p class="subtitle">資料來源：入境事務處 (每15分鐘更新)</p>
+  <div class="header">
+    <h1>🚌 <span id="pageTitle">陸路邊境管制站等候時間</span></h1>
+    <button class="lang-btn" id="langBtn" onclick="toggleLang()">EN</button>
+  </div>
+  <p class="subtitle" id="subtitle">資料來源：入境事務處 (每15分鐘更新)</p>
   <p class="last-update" id="lastUpdate">載入中...</p>
 
   <div class="tabs">
-    <button class="tab active" data-tab="residents" onclick="switchTab('residents')">香港居民</button>
-    <button class="tab" data-tab="visitors" onclick="switchTab('visitors')">訪港旅客</button>
+    <button class="tab active" data-tab="residents" onclick="switchTab('residents')" id="tabResidents">香港居民</button>
+    <button class="tab" data-tab="visitors" onclick="switchTab('visitors')" id="tabVisitors">訪港旅客</button>
   </div>
 
   <div class="legend">
-    <span class="legend-item"><span class="tag tag-0">正常</span> &lt; 15 分鐘</span>
-    <span class="legend-item"><span class="tag tag-1">繁忙</span> 15-30 分鐘</span>
-    <span class="legend-item"><span class="tag tag-2">非常繁忙</span> &gt; 30 分鐘</span>
-    <span class="legend-item"><span class="tag tag-99">關閉</span> 服務暫停</span>
+    <span class="legend-item"><span class="tag tag-0" id="legendNormal">正常</span> <span id="legendNormalDesc">&lt; 15 分鐘</span></span>
+    <span class="legend-item"><span class="tag tag-1" id="legendBusy">繁忙</span> <span id="legendBusyDesc">15-30 分鐘</span></span>
+    <span class="legend-item"><span class="tag tag-2" id="legendVBusy">非常繁忙</span> <span id="legendVBusyDesc">&gt; 30 分鐘</span></span>
+    <span class="legend-item"><span class="tag tag-99" id="legendClosed">關閉</span> <span id="legendClosedDesc">服務暫停</span></span>
   </div>
 
   <div id="residents" class="tab-content active"></div>
   <div id="visitors" class="tab-content" style="display:none"></div>
 
-  <div class="footer">
-    數據來源：<a href="https://data.gov.hk/tc-data/dataset/hk-immd-set28-land-boundary-control-points-waiting-time" target="_blank">data.gov.hk</a> |
-    入境事務處開放數據 |
-    <a href="https://www.immd.gov.hk/opendata/hkt/transport/immigration_clearance/data_dictionary_for_land_boundary_control_points_waiting_time.pdf" target="_blank">數據字典</a>
+  <div class="footer" id="footer">
+    <span id="footerSource">數據來源</span>：<a href="https://data.gov.hk/tc-data/dataset/hk-immd-set28-land-boundary-control-points-waiting-time" id="footerLink" target="_blank">data.gov.hk</a> |
+    <span id="footerDept">入境事務處開放數據</span>
   </div>
 </div>
 
 <script>
+const LANG = {
+  zh: {
+    pageTitle: '陸路邊境管制站等候時間',
+    subtitle: '資料來源：入境事務處 (每15分鐘更新)',
+    loading: '載入中...',
+    tabResidents: '香港居民',
+    tabVisitors: '訪港旅客',
+    legendNormal: '正常',
+    legendNormalDesc: '< 15 分鐘',
+    legendBusy: '繁忙',
+    legendBusyDesc: '15-30 分鐘',
+    legendVBusy: '非常繁忙',
+    legendVBusyDesc: '> 30 分鐘',
+    legendClosed: '關閉',
+    legendClosedDesc: '服務暫停',
+    labelArrival: '入境',
+    labelDeparture: '出境',
+    tagNormal: '正常',
+    tagBusy: '繁忙',
+    tagVBusy: '非常繁忙',
+    tagClosed: '關閉',
+    errorMsg: '⚠️ 無法連接數據來源，請確認網絡後重新整理',
+    footerSource: '數據來源',
+    footerDept: '入境事務處開放數據',
+    footerLink: 'https://data.gov.hk/tc-data/dataset/hk-immd-set28-land-boundary-control-points-waiting-time',
+    lastUpdate: '最後更新',
+  },
+  en: {
+    pageTitle: 'Land Boundary Control Points Waiting Time',
+    subtitle: 'Source: Immigration Department (Updated every 15 min)',
+    loading: 'Loading...',
+    tabResidents: 'HK Residents',
+    tabVisitors: 'Visitors',
+    legendNormal: 'Normal',
+    legendNormalDesc: '< 15 min',
+    legendBusy: 'Busy',
+    legendBusyDesc: '15-30 min',
+    legendVBusy: 'Very Busy',
+    legendVBusyDesc: '> 30 min',
+    legendClosed: 'Closed',
+    legendClosedDesc: 'Service Suspended',
+    labelArrival: 'Arrival',
+    labelDeparture: 'Departure',
+    tagNormal: 'Normal',
+    tagBusy: 'Busy',
+    tagVBusy: 'Very Busy',
+    tagClosed: 'Closed',
+    errorMsg: '⚠️ Unable to fetch data. Check your network and refresh.',
+    footerSource: 'Data Source',
+    footerDept: 'Immigration Department Open Data',
+    footerLink: 'https://data.gov.hk/en-data/dataset/hk-immd-set28-land-boundary-control-points-waiting-time',
+    lastUpdate: 'Last updated',
+  }
+};
+
+let lang = 'zh';
+
+function toggleLang() {
+  lang = lang === 'zh' ? 'en' : 'zh';
+  document.getElementById('langBtn').textContent = lang === 'zh' ? 'EN' : '中';
+  applyLang();
+  renderCurrentTab();
+}
+
+function applyLang() {
+  const t = LANG[lang];
+  document.getElementById('pageTitle').textContent = t.pageTitle;
+  document.getElementById('subtitle').textContent = t.subtitle;
+  document.getElementById('tabResidents').textContent = t.tabResidents;
+  document.getElementById('tabVisitors').textContent = t.tabVisitors;
+  document.getElementById('legendNormal').textContent = t.legendNormal;
+  document.getElementById('legendNormalDesc').textContent = t.legendNormalDesc;
+  document.getElementById('legendBusy').textContent = t.legendBusy;
+  document.getElementById('legendBusyDesc').textContent = t.legendBusyDesc;
+  document.getElementById('legendVBusy').textContent = t.legendVBusy;
+  document.getElementById('legendVBusyDesc').textContent = t.legendVBusyDesc;
+  document.getElementById('legendClosed').textContent = t.legendClosed;
+  document.getElementById('legendClosedDesc').textContent = t.legendClosedDesc;
+  document.getElementById('footerSource').textContent = t.footerSource;
+  document.getElementById('footerDept').textContent = t.footerDept;
+  document.getElementById('footerLink').href = t.footerLink;
+  const now = new Date();
+  document.getElementById('lastUpdate').textContent = t.lastUpdate + '：' + now.toLocaleString(lang === 'zh' ? 'zh-HK' : 'en-US', { timeZone: 'Asia/Hong_Kong' });
+}
+
 const CONTROL_POINTS = {
-  HYW: { name: '香園圍口岸', en: 'Heung Yuen Wai' },
-  HZM: { name: '港珠澳大橋口岸', en: 'Hong Kong-Zhuhai-Macao Bridge' },
-  LMC: { name: '落馬洲口岸', en: 'Lok Ma Chau' },
-  LSC: { name: '羅湖口岸', en: 'Lo Wu' },
-  LWS: { name: '蓮塘口岸', en: 'Liantang' },
-  MKT: { name: '文錦渡口岸', en: 'Man Kam To' },
-  SBC: { name: '深圳灣口岸', en: 'Shenzhen Bay' },
-  STK: { name: '沙頭角口岸', en: 'Sha Tau Kok' }
+  HYW: { zh: '香園圍口岸', en: 'Heung Yuen Wai' },
+  HZM: { zh: '港珠澳大橋口岸', en: 'Hong Kong-Zhuhai-Macao Bridge' },
+  LMC: { zh: '落馬洲口岸', en: 'Lok Ma Chau' },
+  LSC: { zh: '羅湖口岸', en: 'Lo Wu' },
+  LWS: { zh: '蓮塘口岸', en: 'Liantang' },
+  MKT: { zh: '文錦渡口岸', en: 'Man Kam To' },
+  SBC: { zh: '深圳灣口岸', en: 'Shenzhen Bay' },
+  STK: { zh: '沙頭角口岸', en: 'Sha Tau Kok' }
 };
 
 const QUEUE_LABELS = {
-  0: { text: '正常', cls: 'tag-0' },
-  1: { text: '繁忙', cls: 'tag-1' },
-  2: { text: '非常繁忙', cls: 'tag-2' },
-  99: { text: '關閉', cls: 'tag-99' }
+  0: { zh: '正常', en: 'Normal', cls: 'tag-0' },
+  1: { zh: '繁忙', en: 'Busy', cls: 'tag-1' },
+  2: { zh: '非常繁忙', en: 'Very Busy', cls: 'tag-2' },
+  99: { zh: '關閉', en: 'Closed', cls: 'tag-99' }
 };
 
 const RAW_URLS = {
@@ -109,36 +199,44 @@ const API = location.protocol === 'file:'
 
 function getTag(value) {
   const entry = QUEUE_LABELS[value];
-  if (entry) return `<span class="tag ${entry.cls}">${entry.text}</span>`;
-  return `<span class="tag tag-unknown">${value ?? '--'}</span>`;
+  if (entry) return `<span class="tag ${entry.cls}">${entry[lang]}</span>`;
+  return `<span class="tag tag-unknown">--</span>`;
 }
 
 function renderCards(data, containerId) {
   const container = document.getElementById(containerId);
   if (!data) {
-    container.innerHTML = '<div class="error-msg">無法載入數據，請稍後再試</div>';
+    container.innerHTML = '<div class="error-msg">' + LANG[lang].errorMsg + '</div>';
     return;
   }
+  const t = LANG[lang];
   let html = '<div class="grid">';
   for (const [code, cp] of Object.entries(CONTROL_POINTS)) {
     const info = data[code];
     const arrQueue = info ? getTag(info.arrQueue) : '<span class="tag tag-unknown">--</span>';
     const depQueue = info ? getTag(info.depQueue) : '<span class="tag tag-unknown">--</span>';
+    const name = cp[lang];
+    const sub = cp[lang === 'zh' ? 'en' : 'zh'];
     html += `
       <div class="card">
-        <div class="card-title">${cp.name} <span class="en">${cp.en}</span></div>
+        <div class="card-title">${name} <span class="sub">${sub}</span></div>
         <div class="row">
-          <span class="label">入境</span>
+          <span class="label">${t.labelArrival}</span>
           ${arrQueue}
         </div>
         <div class="row">
-          <span class="label">出境</span>
+          <span class="label">${t.labelDeparture}</span>
           ${depQueue}
         </div>
       </div>`;
   }
   html += '</div>';
   container.innerHTML = html;
+}
+
+function renderCurrentTab() {
+  if (cache.residents) renderCards(cache.residents, 'residents');
+  if (cache.visitors) renderCards(cache.visitors, 'visitors');
 }
 
 let currentTab = 'residents';
@@ -153,15 +251,12 @@ async function fetchData() {
     cache.residents = await residentsRes.json();
     cache.visitors = await visitorsRes.json();
     const now = new Date();
-    document.getElementById('lastUpdate').textContent =
-      '最後更新：' + now.toLocaleString('zh-HK', { timeZone: 'Asia/Hong_Kong' });
+    const t = LANG[lang];
+    document.getElementById('lastUpdate').textContent = t.lastUpdate + '：' + now.toLocaleString(lang === 'zh' ? 'zh-HK' : 'en-US', { timeZone: 'Asia/Hong_Kong' });
     renderCards(cache.residents, 'residents');
     renderCards(cache.visitors, 'visitors');
-    if (currentTab === 'visitors') {
-      renderCards(cache.visitors, 'visitors');
-    }
   } catch (e) {
-    document.getElementById('residents').innerHTML = '<div class="error-msg">⚠️ 無法連接數據來源<br><span style="font-size:0.8rem;color:#718096">請確認可存取 secure1.info.gov.hk，或使用本地伺服器（見頁面底部說明）</span></div>';
+    document.getElementById('residents').innerHTML = '<div class="error-msg">' + LANG[lang].errorMsg + '</div>';
     document.getElementById('visitors').innerHTML = '';
   }
 }

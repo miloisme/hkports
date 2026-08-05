@@ -18,16 +18,14 @@
 ,
   "LSC":
   {
-    "arrQueue":0,
-    "depQueue":0
-  }
-,
+    "arrQueue":99,
+    "depQueue":99
+  },
   "LWS":
   {
-    "arrQueue":0,
-    "depQueue":0
-  }
-,
+    "arrQueue":99,
+    "depQueue":99
+  },
   "MKT":
   {
     "arrQueue":99,
@@ -35,10 +33,9 @@
   },
   "SBC":
   {
-    "arrQueue":0,
-    "depQueue":0
-  }
-,
+    "arrQueue":99,
+    "depQueue":99
+  },
   "STK":
   {
     "arrQueue":99,

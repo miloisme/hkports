@@ -1,9 +1,10 @@
 {
   "HYW":
   {
-    "arrQueue":99,
-    "depQueue":99
-  },
+    "arrQueue":0,
+    "depQueue":0
+  }
+,
   "HZM":
   {
     "arrQueue":0,
@@ -18,9 +19,10 @@
 ,
   "LSC":
   {
-    "arrQueue":99,
-    "depQueue":99
-  },
+    "arrQueue":0,
+    "depQueue":0
+  }
+,
   "LWS":
   {
     "arrQueue":0,
@@ -29,9 +31,10 @@
 ,
   "MKT":
   {
-    "arrQueue":99,
-    "depQueue":99
-  },
+    "arrQueue":0,
+    "depQueue":0
+  }
+,
   "SBC":
   {
     "arrQueue":0,
